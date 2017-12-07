@@ -2,6 +2,7 @@ package fi.academy.codeliveserver;
 
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 
 /**
@@ -10,10 +11,23 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class EditorController {
 
+    Document document = new Document();
+
+    @SubscribeMapping("/channel/public")
+    public Message joinChannel() {
+        System.out.println("SUBSCRIBE RECEIVED");
+        Message message = new Message();
+        message.setType(Message.MessageType.FULL);
+        message.setContent(document.getText());
+        return message;
+    }
+
     @MessageMapping("/send")
     @SendTo("/channel/public")
     public Message message(Message message) {
-        return new Message("return message");
+        System.out.println("MESSAGE RECEIVED: " + message);
+        document.insert(message.getStartPos(), message.getEndPos(), message.getContent());
+        return message;
     }
 
 }
