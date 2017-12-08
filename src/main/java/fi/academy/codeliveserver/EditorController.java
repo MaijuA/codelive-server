@@ -15,10 +15,10 @@ public class EditorController {
 
     @SubscribeMapping("/channel/public")
     public Message joinChannel() {
-        System.out.println("SUBSCRIBE RECEIVED");
         Message message = new Message();
         message.setType(Message.MessageType.FULL);
         message.setContent(document.getText());
+        message.setFilename(document.getFilename());
         return message;
     }
 
@@ -26,7 +26,14 @@ public class EditorController {
     @SendTo("/channel/public")
     public Message message(Message message) {
         System.out.println("MESSAGE RECEIVED: " + message);
-        document.insert(message.getStartPos(), message.getEndPos(), message.getContent());
+        switch (message.getType()) {
+            case DELTA:
+                document.insert(message.getStartPos(), message.getEndPos(), message.getContent());
+                break;
+            case NAME:
+                document.setFilename(message.getFilename());
+                break;
+        }
         return message;
     }
 

@@ -5,11 +5,18 @@ package fi.academy.codeliveserver;
  */
 public class Message {
 
-    private String content;
+    private String filename, content;
     private int startPos, endPos;
     private MessageType type;
 
-    public enum MessageType {DELTA, FULL}
+    public enum MessageType {DELTA, FULL, NAME}
+
+    public Message() {
+    }
+
+    public Message(String content) {
+        this.content = content;
+    }
 
     public MessageType getType() {
         return type;
@@ -35,13 +42,6 @@ public class Message {
         this.endPos = endPos;
     }
 
-    public Message() {
-    }
-
-    public Message(String content) {
-        this.content = content;
-    }
-
     public String getContent() {
         return content;
     }
@@ -50,12 +50,22 @@ public class Message {
         this.content = content;
     }
 
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
     @Override
     public String toString() {
         return "Message{" +
-                "content='" + content + '\'' +
+                "filename='" + filename + '\'' +
+                ", content='" + content + '\'' +
                 ", startPos=" + startPos +
                 ", endPos=" + endPos +
+                ", type=" + type +
                 '}';
     }
 }

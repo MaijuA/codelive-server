@@ -6,9 +6,18 @@ package fi.academy.codeliveserver;
 public class Document {
 
     private StringBuilder text;
+    private String filename;
 
     public Document() {
         this.text = new StringBuilder();
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 
     public String getText() {
