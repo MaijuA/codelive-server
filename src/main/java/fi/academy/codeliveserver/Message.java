@@ -3,7 +3,10 @@ package fi.academy.codeliveserver;
 /**
  * Created by Administrator on 05/12/2017.
  */
+
+
 public class Message {
+
 
     private String filename, content;
     private int startPos, endPos;
