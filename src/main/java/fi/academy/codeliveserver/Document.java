@@ -5,10 +5,8 @@ package fi.academy.codeliveserver;
  */
 
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+// MIKA: Muokattu application.properties tiedostoa eli paikallinen SQL-kanta "editorlive" (create database editorlive;)
+import javax.persistence.*;
 
 // MIKA: Alla oleva käyttää toistaiseksi JPA (Java Persistence API), kunnes saadaan muunnettua Hibenate natiiviksi
 @Entity
