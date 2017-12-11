@@ -18,6 +18,12 @@ public class Message {
         this.content = content;
     }
 
+    public Message(Document document) {
+        this.filename = document.getFilename();
+        this.content = document.getText();
+        this.type = MessageType.FULL;
+    }
+
     public MessageType getType() {
         return type;
     }
