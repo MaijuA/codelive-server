@@ -1,14 +1,20 @@
 package fi.academy.codeliveserver;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * Created by Jari Haavisto
  */
 @Controller
+@EnableAutoConfiguration
 public class EditorController {
 
     Document document = new Document();
@@ -35,6 +41,17 @@ public class EditorController {
                 break;
         }
         return message;
+    }
+
+
+    @Autowired
+    private DocumentRepository tallennaTietokantaan;
+
+    @RequestMapping("/tallenna")
+    @ResponseBody
+    public ResponseEntity tallennaTietokantaan() {
+        tallennaTietokantaan.save(document);
+        return ResponseEntity.ok("Tallennustapahtuma käynnistetty (jostain syystä luo vain ID:n mutta sisältö on null)");
     }
 
 }

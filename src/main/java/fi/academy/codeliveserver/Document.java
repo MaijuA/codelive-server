@@ -24,9 +24,17 @@ public class Document {
 //    @GeneratedValue(generator = "increment") // Hibernate natiivilla + alla oleva annotaatio
 //    @GenericGenerator(name = "increment", strategy = "increment") // Hibernate natiivilla
     @GeneratedValue(strategy= GenerationType.AUTO)
-    private long id;
+    private int id;
 
-    @Lob // MIKA: String on oletusarvoisesti VARCHAR(255), lisäämällä annotaation @Lob tulee tyypiksi TEXT (voi tosin riippua kannasta!)
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @Transient
     private StringBuilder text;
 
     private String filename;
@@ -43,6 +51,7 @@ public class Document {
         this.filename = filename;
     }
 
+    @Lob // MIKA: String on oletusarvoisesti VARCHAR(255), lisäämällä annotaation @Lob tulee tyypiksi TEXT (voi tosin riippua kannasta!)
     public String getText() {
         return text.toString();
     }
