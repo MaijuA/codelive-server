@@ -6,6 +6,8 @@ package fi.academy.codeliveserver;
  * Message on websocketissa kulkevien viestien perusmuoto. Siihen kuuluu
  * viestin tyyppi ja sisältö. Sisällön luonne muuttuu tyypin mukaan.
  */
+
+
 public class Message {
 
     private String content;

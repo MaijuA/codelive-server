@@ -2,16 +2,22 @@ package fi.academy.codeliveserver;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.http.ResponseEntity;
+
 /**
  * Created by Jari Haavisto
  */
 @Controller
+@EnableAutoConfiguration
 public class EditorController {
 
     @Autowired
@@ -31,8 +37,6 @@ public class EditorController {
         message.setType(Message.MessageType.FULL);
         return message;
     }
-
-
 
     /*
     Koska käyttämämme palvelin (SimpleBroker) ei osaa käsitellä subscribe/unsubscribe-tapahtumia
@@ -76,7 +80,21 @@ public class EditorController {
         document.insert(message.getStartPos(), message.getEndPos(), message.getContent());
         return message;
     }
+/*
+ *
+ * Tämä ilmeisesti keskeneräinen, joten laitan kommentteihin. --Jari
 
 
+    @Autowired
+    private DocumentRepository tallennaTietokantaan;
+
+    // MIKA
+    @RequestMapping("/tallenna")
+    @ResponseBody
+    public ResponseEntity tallennaTietokantaan() {
+        int id = tallennaTietokantaan.save(document).getId();
+        return ResponseEntity.ok("Tallennettu tietokantaan ID:llä " + id + ". Palaa takaisin <a href='http://codelive-client.herokuapp.com/'>etusivulle</a>)");
+    }
+    */
 
 }
