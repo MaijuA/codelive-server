@@ -29,7 +29,7 @@ ei sidota jäsenmuuttujaan vaan getteriin
 @Table(name = "ASIAKIRJA") // Hibernate natiivilla ilman nimeämistä oletusarvoinen taulu luotaisiin nimellä EVENT
 public class Document {
 
-    // Tästä on poistettu annotattio @Id, koska @Access(AccessType.PROPERTY)
+    // MIKA: Tästä on poistettu annotattio @Id, koska @Access(AccessType.PROPERTY)
     private int id;
 
     @Transient// MIKA: Pyrkimys tulkita tietokantaan tallennettava teksti muodossa String eikä StringBuilder (toimii 11.12.2017 ilman tätäkin).

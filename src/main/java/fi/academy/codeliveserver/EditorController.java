@@ -51,7 +51,7 @@ public class EditorController {
     @ResponseBody
     public ResponseEntity tallennaTietokantaan() {
         tallennaTietokantaan.save(document);
-        return ResponseEntity.ok("Tallennustapahtuma käynnistetty (jostain syystä luo vain ID:n mutta sisältö on null)");
+        return ResponseEntity.ok("Tallennettu tietokantaan ID:llä X. Palaa takaisin <a href='http://codelive-client.herokuapp.com/'>etusivulle</a>)");
     }
 
 }
