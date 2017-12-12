@@ -8,42 +8,75 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 
-import java.util.HashMap;
-import java.util.Map;
-
-
 /**
  * Created by Jari Haavisto
  */
 @Controller
 public class EditorController {
 
-    Map<String, Document> contents = new HashMap<>();
-    Map<String, Integer> nOfUsers = new HashMap<>();
-
     @Autowired
     ChannelData channelData;
 
-    @SubscribeMapping("/channel/{channelName}")
-    public Message channelSubscription(@DestinationVariable String channelName) {
-        channelData.subscribe(channelName);
-        return new Message(channelData.get(channelName));
-    }
-
-    @MessageMapping("/send/{channelName}")
-    @SendTo("/channel/{channelName}")
-    public Message receiveMessage(@Payload Message message, @DestinationVariable("channelName") String channelName) {
-        Document document = channelData.get(channelName);
-        System.out.println("RECEIVED " + message + " @ " + channelName);
-        switch (message.getType()) {
-            case DELTA:
-                document.insert(message.getStartPos(), message.getEndPos(), message.getContent());
-                break;
-            case NAME:
-                document.setFilename(message.getFilename());
-                break;
-        }
+    /*
+    Kun käyttäjä kirjautuu kanavalle, ajetaan metodi channelSubscription. Muuttujaan
+    channelData talletetaan tieto siitä, että kanavalle on tullut yksi käyttäjä lisää.
+    Käyttäjälle palautetaan viestissä teksti, joka kanavalle on jo kirjoitettu.
+     */
+    @SubscribeMapping("/channel/{channel}")
+    public FullMessage channelSubscription(@DestinationVariable("channel") String channel) {
+        Document channelContent = channelData.get(channel);
+        FullMessage message = new FullMessage();
+        message.setContent(channelContent.getText());
+        message.setFilename(channelContent.getFilename()); /////  <--- tuolta null?
+        message.setType(Message.MessageType.FULL);
         return message;
     }
+
+
+
+    /*
+    Koska käyttämämme palvelin (SimpleBroker) ei osaa käsitellä subscribe/unsubscribe-tapahtumia
+    riittävällä detaljitasolla, asiakaspuolen odotetaan lähettävän viesti ennen tapahtumaa
+    osoitteeseen "/send/{channel}.join" tai "/send/{channel}.leave". Lähetetyssä viestissä
+    tulee olla sisältönä (content) käyttäjänimi. Metodit joinChannel ja leaveChannel käsittelevät
+    toimenpiteet, jotka tulee tehdä käyttäjän liittyessä/poistuessa kanavalta.
+     */
+    @MessageMapping("/send/{channel}.join")
+    @SendTo("/channel/{channel}")
+    public UserListMessage joinChannel(@Payload Message message, @DestinationVariable("channel") String channel) {
+        System.out.println("JOINING:" + message.getContent());
+        channelData.subscribe(channel, message.getContent());
+        return new UserListMessage(channelData.getUsers(channel));
+    }
+
+    @MessageMapping("/send/{channelName}.leave")
+    public void leaveChannel(@Payload Message message, @DestinationVariable("channelName") String channelName) {
+        System.out.println("LEAVING:" + message.getContent());
+        channelData.unsubscribe(channelName, message.getContent());
+    }
+
+
+    /*
+    Metodi filenameController ottaa vastaan viestit, jotka sisältävät tietoa tiedostonimen muutoksista
+     */
+    @MessageMapping("/filename/{channel}")
+    @SendTo("/channel/{channel}")
+    public Message filenameController(@Payload Message message, @DestinationVariable("channel") String channelName) {
+        channelData.get(channelName).setFilename(message.getContent());
+        return message;
+    }
+
+    /*
+    Metodi deltaControlelr ottaa vastaan viestit, jotka sisältävät tietoa tekstimuutoksista.
+     */
+    @MessageMapping("/delta/{channel}")
+    @SendTo("/channel/{channel}")
+    public DeltaMessage deltaController(@Payload DeltaMessage message, @DestinationVariable("channel") String channel) {
+        Document document = channelData.get(channel);
+        document.insert(message.getStartPos(), message.getEndPos(), message.getContent());
+        return message;
+    }
+
+
 
 }

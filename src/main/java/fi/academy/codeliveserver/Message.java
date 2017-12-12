@@ -1,27 +1,20 @@
 package fi.academy.codeliveserver;
 
 /**
- * Created by Administrator on 05/12/2017.
+ * Created by Jari Haavisto
+ *
+ * Message on websocketissa kulkevien viestien perusmuoto. Siihen kuuluu
+ * viestin tyyppi ja sisältö. Sisällön luonne muuttuu tyypin mukaan.
  */
 public class Message {
 
-    private String filename, content;
-    private int startPos, endPos;
+    private String content;
     private MessageType type;
 
-    public enum MessageType {DELTA, FULL, NAME}
+    public enum MessageType {DELTA, FULL, NAME, JOIN, USERS}
 
     public Message() {
-    }
-
-    public Message(String content) {
-        this.content = content;
-    }
-
-    public Message(Document document) {
-        this.filename = document.getFilename();
-        this.content = document.getText();
-        this.type = MessageType.FULL;
+        this.content = "";
     }
 
     public MessageType getType() {
@@ -32,22 +25,6 @@ public class Message {
         this.type = type;
     }
 
-    public int getStartPos() {
-        return startPos;
-    }
-
-    public void setStartPos(int startPos) {
-        this.startPos = startPos;
-    }
-
-    public int getEndPos() {
-        return endPos;
-    }
-
-    public void setEndPos(int endPos) {
-        this.endPos = endPos;
-    }
-
     public String getContent() {
         return content;
     }
@@ -56,22 +33,4 @@ public class Message {
         this.content = content;
     }
 
-    public String getFilename() {
-        return filename;
-    }
-
-    public void setFilename(String filename) {
-        this.filename = filename;
-    }
-
-    @Override
-    public String toString() {
-        return "Message{" +
-                "filename='" + filename + '\'' +
-                ", content='" + content + '\'' +
-                ", startPos=" + startPos +
-                ", endPos=" + endPos +
-                ", type=" + type +
-                '}';
-    }
 }
