@@ -28,8 +28,14 @@ public class EditorController {
         return message;
     }
 
-    @MessageMapping("/send")
-    @SendTo("/channel/public")
+    // MIKA: Koska pistokkeen eli WebSocketin konfiguraatiossa on määritelty ns. juuren murupoluksi "/ws",
+    // vastaanottaa tämä Spring Kontrollerin metodi "send" murupolkuun "ws/send" saapuvat viestilähetykset
+    // selaimen STOMP-protokollan asiakkaalta eli HTML:n index-sivulla JavaScriptissä
+    // Stomp.over(new SockJS('/send'))
+    @MessageMapping("/send")    // @MessageMapping("/viestit_sisaan")
+    // Saapunut viesti käsitellään ja sen jälkeen se lähetetään tässä määriteltyyn osoitteeseen,
+    @SendTo("/channel/public")  // @SendTo("/keskustelunaihe_ulos/viestisanoma")
+    // josta kaikki keskusteluaiheen seuraajat (tilaajat) vastaanottavat lähetyksen
     public Message message(Message message) {
         System.out.println("MESSAGE RECEIVED: " + message);
         switch (message.getType()) {
@@ -47,11 +53,12 @@ public class EditorController {
     @Autowired
     private DocumentRepository tallennaTietokantaan;
 
+    // MIKA
     @RequestMapping("/tallenna")
     @ResponseBody
     public ResponseEntity tallennaTietokantaan() {
-        tallennaTietokantaan.save(document);
-        return ResponseEntity.ok("Tallennettu tietokantaan ID:llä X. Palaa takaisin <a href='http://codelive-client.herokuapp.com/'>etusivulle</a>)");
+        int id = tallennaTietokantaan.save(document).getId();
+        return ResponseEntity.ok("Tallennettu tietokantaan ID:llä " + id + ". Palaa takaisin <a href='http://codelive-client.herokuapp.com/'>etusivulle</a>)");
     }
 
 }
