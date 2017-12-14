@@ -1,5 +1,6 @@
 package fi.academy.codeliveserver;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
@@ -37,16 +38,27 @@ public class ChannelData implements Serializable{
         users.get(channel).add(user);
     }
 
+    @Autowired  // MIKA: Yhdistää DocumentRepository nimisen rajapinnan käsittelemään dataa
+                // (kommunikoitaessa tietokannan kanssa) tämän java-luokan kautta
+    private DocumentRepository tallennaTietokantaan; // MIKA: Annetaan repolle alias
+
     public void unsubscribe(String channel, String user) {
         if (users.containsKey(channel) && users.get(channel).contains(user)) {
             if (users.get(channel).size() == 1) {
+
+                // MIKA: Kanavan Viimeisen käyttäjän sammuttaessa selaimen tai sulkiessa rastista "kanava-tabin"
+                // tallennetaan taustalla automaattisesti editorin sisältö talteen tietokantaan
+                Document asiakirja = documents.get(channel);
+                asiakirja.setChannelName(channel); // Lisätään tallennettavaan olioon "kanava-tabin" nimi
+                tallennaTietokantaan.save(documents.get(channel)).getId();
+
                 users.remove(channel);
-                documents.remove(channel);
             } else {
                 users.get(channel).remove(user);
             }
         }
     }
+
 
     public boolean contains(String key) {
         return documents.containsKey(key);
