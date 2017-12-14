@@ -1,5 +1,8 @@
 package fi.academy.codeliveserver;
 
+import fi.academy.codeliveserver.message.DeltaMessage;
+import fi.academy.codeliveserver.message.FullMessage;
+import fi.academy.codeliveserver.message.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -54,10 +57,18 @@ public class EditorController {
         return new UserListMessage(channelData.getUsers(channel));
     }
 
-    @MessageMapping("/send/{channelName}.leave")
-    public void leaveChannel(@Payload Message message, @DestinationVariable("channelName") String channelName) {
+    @MessageMapping("/send/{channel}.leave")
+    @SendTo("/channel/{channel}")
+    public UserListMessage leaveChannel(@Payload Message message, @DestinationVariable("channel") String channel) {
         System.out.println("LEAVING:" + message.getContent());
-        channelData.unsubscribe(channelName, message.getContent());
+        channelData.unsubscribe(channel, message.getContent());
+        return new UserListMessage(channelData.getUsers(channel));
+    }
+
+    @MessageMapping("/send/{channel}.save")
+    @SendTo("/channel/{channel}")
+    public void saveChannel(@DestinationVariable("channel") String channel) {
+        System.out.println("SAVE MESSAGE RECEIVED");
     }
 
 
@@ -84,18 +95,19 @@ public class EditorController {
 /*
  *
  * Tämä ilmeisesti keskeneräinen, joten laitan kommentteihin. --Jari
+ *
 
 
     @Autowired
     private DocumentRepository tallennaTietokantaan;
 
     // MIKA
-    @RequestMapping("/tallenna")
+    @RequestMapping("/tallenna/{channel}")
     @ResponseBody
-    public ResponseEntity tallennaTietokantaan() {
+    public ResponseEntity tallennaTietokantaan(@DestinationVariable("channel") String channel) {
         int id = tallennaTietokantaan.save(document).getId();
         return ResponseEntity.ok("Tallennettu tietokantaan ID:llä " + id + ". Palaa takaisin <a href='http://codelive-client.herokuapp.com/'>etusivulle</a>)");
     }
-    */
+*/
 
 }

@@ -1,5 +1,7 @@
 package fi.academy.codeliveserver;
 
+import fi.academy.codeliveserver.message.Message;
+
 import java.util.List;
 
 /**

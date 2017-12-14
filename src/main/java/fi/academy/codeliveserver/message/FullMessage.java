@@ -1,4 +1,6 @@
-package fi.academy.codeliveserver;
+package fi.academy.codeliveserver.message;
+
+import fi.academy.codeliveserver.message.Message;
 
 /**
  * Created by Administrator on 11/12/2017.

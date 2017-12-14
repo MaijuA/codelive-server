@@ -1,4 +1,4 @@
-package fi.academy.codeliveserver;
+package fi.academy.codeliveserver.message;
 
 /**
  * Created by Jari Haavisto
