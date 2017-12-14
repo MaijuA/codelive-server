@@ -52,7 +52,7 @@ public class EditorController {
     @MessageMapping("/send/{channel}.join")
     @SendTo("/channel/{channel}")
     public UserListMessage joinChannel(@Payload Message message, @DestinationVariable("channel") String channel) {
-        System.out.println("JOINING:" + message.getContent());
+        System.out.println("JOINING " + channel + ":" + message.getContent());
         channelData.subscribe(channel, message.getContent());
         return new UserListMessage(channelData.getUsers(channel));
     }
@@ -60,7 +60,7 @@ public class EditorController {
     @MessageMapping("/send/{channel}.leave")
     @SendTo("/channel/{channel}")
     public UserListMessage leaveChannel(@Payload Message message, @DestinationVariable("channel") String channel) {
-        System.out.println("LEAVING:" + message.getContent());
+        System.out.println("LEAVING " + channel + ":" + message.getContent());
         channelData.unsubscribe(channel, message.getContent());
         return new UserListMessage(channelData.getUsers(channel));
     }
