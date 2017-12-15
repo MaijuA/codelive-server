@@ -6,7 +6,7 @@ package fi.academy.codeliveserver;
 
 
 // MIKA: Muokattu application.properties tiedostoa eli paikallinen SQL-kanta "editorlive" (create database editorlive;)
-// MIKA: Käytetään toistaiseksi JPA (Java Persistence API), kunnes saadaan muunnettua Hibenate natiiviksi
+// MIKA: Käytetään toistaiseksi JPA (Java Persistence API), kunnes saadaan muunnettua Hibenate natiiviksi (jos aika riittää)
 import javax.persistence.*;
 
 @Entity
@@ -18,9 +18,10 @@ tämä luokka ei voi olla final tai enum (etukäteen määritellyt tyypit omaava
 
 @Access(AccessType.PROPERTY)
 /*
-MIKA: @Access(AccessType.PROPERTY) muuttaa Java-luokan ja tietokantataulun mäppäyksen
-tehtäväksi gettereiden perusteella eikä jäsenmuuttujien. Tämän vuoksi annotaatiota @Id ja sen mukana olevaa
-tietoa yksilöllisestä avaimesta @GeneratedValue(strategy= GenerationType.AUTO)
+MIKA (TOMMI): @Access(AccessType.PROPERTY) muuttaa Java-luokan ja tietokantataulun mäppäyksen
+tehtäväksi gettereiden perusteella eikä normaaliin tapaan jäsenmuuttujien perusteella.
+Tämän vuoksi annotaatiota @Id ja sen mukana olevaa tietoa yksilöllisestä
+avaimesta @GeneratedValue(strategy= GenerationType.AUTO)
 ei sidota jäsenmuuttujaan vaan getteriin
 */
 
@@ -34,20 +35,22 @@ public class Document {
 
     @Transient// MIKA: Pyrkimys tulkita tietokantaan tallennettava teksti muodossa String eikä StringBuilder (toimii 11.12.2017 ilman tätäkin).
     private StringBuilder stringBuilder;
-    private String text;
     private String filename;
     private String channelName;
 
-    public String getChannelName() {
-        return channelName;
-    }
-
-    public void setChannelName(String channelName) {
-        this.channelName = channelName;
-    }
-
+    // Konstruktori
     public Document() {
         this.stringBuilder = new StringBuilder();
+    }
+
+    @Id
+    @GeneratedValue(strategy= GenerationType.AUTO)
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Lob // MIKA: String on oletusarvoisesti VARCHAR(255), lisäämällä annotaation @Lob tulee tyypiksi TEXT (voi tosin riippua kannasta!)
@@ -59,14 +62,12 @@ public class Document {
         this.stringBuilder = new StringBuilder(text);
     }
 
-    @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    public int getId() {
-        return id;
+    public String getChannelName() {
+        return channelName;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setChannelName(String channelName) {
+        this.channelName = channelName;
     }
 
     public String getFilename() {
