@@ -11,11 +11,10 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
-/*
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.http.ResponseEntity;
-*/
 
 /**
  * Created by Jari Haavisto
@@ -65,13 +64,6 @@ public class EditorController {
         return new UserListMessage(channelData.getUsers(channel));
     }
 
-    @MessageMapping("/send/{channel}.save")
-    @SendTo("/channel/{channel}")
-    public void saveChannel(@DestinationVariable("channel") String channel) {
-        System.out.println("SAVE MESSAGE RECEIVED");
-    }
-
-
     /*
     Metodi filenameController ottaa vastaan viestit, jotka sisältävät tietoa tiedostonimen muutoksista
      */
@@ -92,22 +84,27 @@ public class EditorController {
         document.insert(message.getStartPos(), message.getEndPos(), message.getContent());
         return message;
     }
-/*
- *
- * Tämä ilmeisesti keskeneräinen, joten laitan kommentteihin. --Jari
- *
-
 
     @Autowired
     private DocumentRepository tallennaTietokantaan;
+    @MessageMapping("/send/{channel}.save")
+    @SendTo("/channel/{channel}")
+    public ResponseEntity saveChannel(@DestinationVariable("channel") String channel) {
+        Document doc = channelData.get(channel);
+        doc.setChannelName(channel);
+        int id = tallennaTietokantaan.save(doc).getId();
+        return ResponseEntity.ok("Tallennettu tietokantaan ID:llä " + id + ". Palaa takaisin <a href='http://codelive-client.herokuapp.com/'>etusivulle</a>)");
+    }
 
-    // MIKA
-    @RequestMapping("/tallenna/{channel}")
+
+/*
+// Aiemmin (12.12.17) toiminut versio
+    @RequestMapping("/tallenna")
+>>>>>>> 2d48628fe8ef81e90c0780b43c8ab13c998803de
     @ResponseBody
     public ResponseEntity tallennaTietokantaan(@DestinationVariable("channel") String channel) {
         int id = tallennaTietokantaan.save(document).getId();
         return ResponseEntity.ok("Tallennettu tietokantaan ID:llä " + id + ". Palaa takaisin <a href='http://codelive-client.herokuapp.com/'>etusivulle</a>)");
     }
 */
-
 }

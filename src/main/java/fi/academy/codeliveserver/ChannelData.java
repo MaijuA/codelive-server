@@ -2,6 +2,7 @@ package fi.academy.codeliveserver;
 
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.Map;
  * muuttujista tuhotaan kanavan nimeä vastaavat arvot.
  */
 @Component("channelData")
-public class ChannelData {
+public class ChannelData implements Serializable{
     private Map<String, Document> documents;
     private Map<String, List<String>> users;
 
